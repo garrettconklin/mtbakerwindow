@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holiday Light Mockup Tool V.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        /* Custom styles for the mockup tool */
+        .mockup-container {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .pattern-preview {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .glow-effect {
+            filter: drop-shadow(0 0 6px currentColor);
+        }
+        
+        /* Hide scrollbars but keep functionality */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6B7280;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white mockup-container">
+    <!-- Main Container -->
+    <div id="holiday-light-mockup-v2" class="min-h-screen bg-gray-900 text-white">
+        <!-- Header -->
+        <header class="bg-gray-800 border-b border-gray-700 p-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-green-400">Holiday Light Mockup Tool V.2</h1>
+                    <p class="text-gray-300 text-sm">Professional Christmas Light Visualization</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="new-photo-btn" class="hidden px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded border border-gray-600 text-gray-300 hover:text-white">
+                        <i data-lucide="upload" class="w-4 h-4 mr-2 inline"></i>New Photo
+                    </button>
+                    <button id="undo-btn" class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded border border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="undo" class="w-4 h-4"></i>
+                    </button>
+                    <button id="redo-btn" class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded border border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="redo" class="w-4 h-4"></i>
+                    </button>
+                    <button id="clear-all-btn" class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 rounded border border-gray-600 text-red-400 hover:text-red-300">
+                        Clear All
+                    </button>
+                    <button id="export-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="download" class="w-4 h-4 mr-2 inline"></i>Export
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
+            <!-- Main Canvas Area -->
+            <div class="flex-1 flex flex-col bg-gray-950">
+                <!-- Image Upload Area -->
+                <div id="upload-area" class="flex-1 flex items-center justify-center">
+                    <div class="bg-gray-800 border-gray-700 border-2 border-dashed p-8 text-center max-w-md mx-auto rounded-lg">
+                        <i data-lucide="image" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                        <h2 class="text-xl font-semibold text-white mb-2">Upload Your Home Photo</h2>
+                        <p class="text-gray-300 text-sm mb-6">
+                            Upload a daylight photo of your home to start creating your holiday light mockup. 
+                            We'll automatically convert it to evening lighting for the best visualization.
+                        </p>
+                        <button id="upload-btn" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
+                            <i data-lucide="upload" class="w-4 h-4 mr-2 inline"></i>Choose Photo
+                        </button>
+                        <input type="file" id="file-input" accept="image/*" class="hidden">
+                        <div class="mt-4 text-xs text-gray-400">
+                            <p>Supported formats: JPG, PNG, WebP</p>
+                            <p>Best results with clear, well-lit photos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas Area -->
+                <div id="canvas-area" class="flex-1 relative hidden">
+                    <canvas id="main-canvas" class="w-full h-full cursor-crosshair"></canvas>
+                    
+                    <!-- Status Messages -->
+                    <div id="drawing-status" class="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded text-sm hidden">
+                        Click to continue line • Double-click to finish
+                    </div>
+                    
+                    <div id="tracing-status" class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded text-sm hidden">
+                        Drag to trace area • Release to finish
+                    </div>
+
+                    <!-- Before/After Toggle -->
+                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                        <div class="flex items-center bg-gray-800 rounded-lg p-1 border border-gray-700">
+                            <button id="before-btn" class="flex items-center gap-2 px-3 py-1 rounded text-sm bg-gray-700 text-white">
+                                <i data-lucide="sun" class="w-4 h-4"></i>Before
+                            </button>
+                            <button id="after-btn" class="flex items-center gap-2 px-3 py-1 rounded text-sm text-gray-300 hover:text-white">
+                                <i data-lucide="moon" class="w-4 h-4"></i>After
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Controls -->
+                <div id="bottom-controls" class="bg-gray-800 border-t border-gray-700 p-4 hidden">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-white font-semibold">Customize String Lights</h3>
+                            <div class="text-sm text-gray-300">Click to add points • Double-click to finish • Shift+drag for mini lights</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Light Colors</label>
+                                <select id="pattern-select" class="w-full bg-gray-700 border-gray-600 text-white rounded px-3 py-2">
+                                    <option value="warm-white">Warm White</option>
+                                    <option value="cool-white">Cool White</option>
+                                    <option value="multi-color">Multi-Color</option>
+                                    <option value="candy-cane">Candy Cane</option>
+                                    <option value="icicle">Icicle</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="halloween">Halloween</option>
+                                    <option value="orange">Orange</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Bulb Spacing: <span id="spacing-value">16"</span></label>
+                                <input type="range" id="spacing-slider" min="6" max="18" value="16" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>6"</span><span>18"</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Brightness: <span id="brightness-value">85%</span></label>
+                                <input type="range" id="brightness-slider" min="20" max="100" value="85" step="5" class="w-full">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>20%</span><span>100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Lights Section -->
+                        <div class="mt-6 pt-6 border-t border-gray-700">
+                            <h3 class="text-white font-semibold mb-4">Customize Mini Lights</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Light Colors</label>
+                                    <select id="mini-pattern-select" class="w-full bg-gray-700 border-gray-600 text-white rounded px-3 py-2">
+                                        <option value="warm-white">Warm White</option>
+                                        <option value="cool-white">Cool White</option>
+                                        <option value="multi-color">Multi-Color</option>
+                                        <option value="candy-cane">Candy Cane</option>
+                                        <option value="icicle">Icicle</option>
+                                        <option value="blue">Blue</option>
+                                        <option value="halloween">Halloween</option>
+                                        <option value="orange">Orange</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Size: <span id="mini-size-value">1.0px</span></label>
+                                    <input type="range" id="mini-size-slider" min="0.5" max="1.5" value="1.0" step="0.1" class="w-full">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Density: <span id="mini-density-value">40%</span></label>
+                                    <input type="range" id="mini-density-slider" min="5" max="80" value="40" step="5" class="w-full">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Brightness: <span id="mini-brightness-value">85%</span></label>
+                                    <input type="range" id="mini-brightness-slider" min="20" max="100" value="85" step="5" class="w-full">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div id="side-panel" class="w-full lg:w-80 bg-gray-800 border-l border-gray-700 hidden">
+                <div class="h-full overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                    <!-- Instructions -->
+                    <div class="bg-gray-900 border border-gray-700 p-4 rounded">
+                        <h3 class="text-white font-semibold mb-3">Instructions</h3>
+                        <div class="text-sm text-gray-300 space-y-1">
+                            <p><strong>String Lights:</strong></p>
+                            <p>• Left click to start/continue line</p>
+                            <p>• Double-click to finish</p>
+                            <p><strong>Mini Lights:</strong></p>
+                            <p>• Hold Shift + drag to trace area</p>
+                            <p>• Release to finish area</p>
+                        </div>
+                    </div>
+
+                    <!-- Light Runs List -->
+                    <div id="light-runs-panel" class="bg-gray-900 border border-gray-700 p-4 rounded hidden">
+                        <h3 class="text-white font-semibold mb-3">String Light Runs (<span id="runs-count">0</span>)</h3>
+                        <div id="runs-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar"></div>
+                    </div>
+
+                    <!-- Mini Light Areas List -->
+                    <div id="mini-areas-panel" class="bg-gray-900 border border-gray-700 p-4 rounded hidden">
+                        <h3 class="text-white font-semibold mb-3">Mini Light Areas (<span id="areas-count">0</span>)</h3>
+                        <div id="areas-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Holiday Light Mockup Tool V.2 Class
+        class HolidayLightMockupV2 {
+            constructor() {
+                this.canvas = document.getElementById('main-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.uploadedImage = null;
+                this.imageElement = new Image();
+                this.lightRuns = [];
+                this.miniLightAreas = [];
+                this.currentRun = [];
+                this.currentMiniTrace = [];
+                this.drawingMode = 'idle'; // 'idle', 'drawing-string', 'tracing-mini'
+                this.showBefore = false;
+                this.history = { past: [], future: [] };
+                this.cooldownUntil = 0;
+                
+                // Settings
+                this.settings = {
+                    pattern: 'warm-white',
+                    spacing: 16,
+                    brightness: 85,
+                    miniPattern: 'warm-white',
+                    miniSize: 1.0,
+                    miniDensity: 40,
+                    miniBrightness: 85
+                };
+
+                this.drawRect = { x: 0, y: 0, w: 0, h: 0 };
+                this.isMouseDown = false;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+            }
+
+            setupEventListeners() {
+                // File upload
+                document.getElementById('upload-btn').addEventListener('click', () => {
+                    document.getElementById('file-input').click();
+                });
+                
+                document.getElementById('file-input').addEventListener('change', (e) => {
+                    this.handleFileUpload(e);
+                });
+
+                // Canvas events
+                this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+                this.canvas.addEventListener('dblclick', (e) => this.handleCanvasDoubleClick(e));
+                this.canvas.addEventListener('mousedown', (e) => this.handleCanvasMouseDown(e));
+                this.canvas.addEventListener('mousemove', (e) => this.handleCanvasMouseMove(e));
+                this.canvas.addEventListener('mouseup', (e) => this.handleCanvasMouseUp(e));
+
+                // Controls
+                document.getElementById('pattern-select').addEventListener('change', (e) => {
+                    this.settings.pattern = e.target.value;
+                    this.updateAllRuns();
+                });
+
+                document.getElementById('spacing-slider').addEventListener('input', (e) => {
+                    this.settings.spacing = parseInt(e.target.value);
+                    document.getElementById('spacing-value').textContent = e.target.value + '"';
+                    this.updateAllRuns();
+                });
+
+                document.getElementById('brightness-slider').addEventListener('input', (e) => {
+                    this.settings.brightness = parseInt(e.target.value);
+                    document.getElementById('brightness-value').textContent = e.target.value + '%';
+                    this.updateAllRuns();
+                });
+
+                // Mini light controls
+                document.getElementById('mini-pattern-select').addEventListener('change', (e) => {
+                    this.settings.miniPattern = e.target.value;
+                    this.updateAllMiniAreas();
+                });
+
+                document.getElementById('mini-size-slider').addEventListener('input', (e) => {
+                    this.settings.miniSize = parseFloat(e.target.value);
+                    document.getElementById('mini-size-value').textContent = e.target.value + 'px';
+                    this.updateAllMiniAreas();
+                });
+
+                document.getElementById('mini-density-slider').addEventListener('input', (e) => {
+                    this.settings.miniDensity = parseInt(e.target.value);
+                    document.getElementById('mini-density-value').textContent = e.target.value + '%';
+                    this.updateAllMiniAreas();
+                });
+
+                document.getElementById('mini-brightness-slider').addEventListener('input', (e) => {
+                    this.settings.miniBrightness = parseInt(e.target.value);
+                    document.getElementById('mini-brightness-value').textContent = e.target.value + '%';
+                    this.updateAllMiniAreas();
+                });
+
+                // Before/After toggle
+                document.getElementById('before-btn').addEventListener('click', () => this.toggleBeforeAfter(true));
+                document.getElementById('after-btn').addEventListener('click', () => this.toggleBeforeAfter(false));
+
+                // Action buttons
+                document.getElementById('new-photo-btn').addEventListener('click', () => this.resetTool());
+                document.getElementById('undo-btn').addEventListener('click', () => this.undo());
+                document.getElementById('redo-btn').addEventListener('click', () => this.redo());
+                document.getElementById('clear-all-btn').addEventListener('click', () => this.clearAll());
+                document.getElementById('export-btn').addEventListener('click', () => this.exportImage());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.drawingMode !== 'idle') {
+                        this.cancelCurrentAction();
+                    }
+                    if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.undo();
+                    }
+                });
+            }
+
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.uploadedImage = e.target.result;
+                        this.imageElement.src = this.uploadedImage;
+                        this.imageElement.onload = () => {
+                            this.showCanvas();
+                            this.drawCanvas();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            showCanvas() {
+                document.getElementById('upload-area').classList.add('hidden');
+                document.getElementById('canvas-area').classList.remove('hidden');
+                document.getElementById('bottom-controls').classList.remove('hidden');
+                document.getElementById('side-panel').classList.remove('hidden');
+                document.getElementById('new-photo-btn').classList.remove('hidden');
+                document.getElementById('export-btn').disabled = false;
+            }
+
+            resizeCanvas() {
+                const container = this.canvas.parentElement;
+                if (!container) return;
+
+                const containerWidth = container.clientWidth || 0;
+                const containerHeight = container.clientHeight || 0;
+                const height = containerHeight > 0 ? containerHeight : Math.round(containerWidth * (9 / 16));
+
+                this.canvas.width = containerWidth;
+                this.canvas.height = height;
+                
+                if (this.uploadedImage) {
+                    this.drawCanvas();
+                }
+            }
+
+            computeDrawRect() {
+                if (!this.imageElement.complete || this.imageElement.naturalWidth === 0) {
+                    return { x: 0, y: 0, w: 0, h: 0 };
+                }
+
+                const iw = this.imageElement.naturalWidth;
+                const ih = this.imageElement.naturalHeight;
+                const imageAspect = iw / ih;
+                const canvasAspect = this.canvas.width / this.canvas.height;
+
+                let w, h, x, y;
+                if (imageAspect > canvasAspect) {
+                    w = this.canvas.width;
+                    h = w / imageAspect;
+                    x = 0;
+                    y = (this.canvas.height - h) / 2;
+                } else {
+                    h = this.canvas.height;
+                    w = h * imageAspect;
+                    x = (this.canvas.width - w) / 2;
+                    y = 0;
+                }
+                
+                this.drawRect = { x, y, w, h };
+                return this.drawRect;
+            }
+
+            drawCanvas() {
+                if (!this.ctx || !this.imageElement.complete) return;
+
+                const { x, y, w, h } = this.computeDrawRect();
+                
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.drawImage(this.imageElement, x, y, w, h);
+
+                if (!this.showBefore) {
+                    this.applyDuskFilter(x, y, w, h);
+                    this.renderMiniLights();
+                    this.renderLights();
+                    this.renderCurrentTrace();
+                }
+            }
+
+            applyDuskFilter(x, y, w, h) {
+                // Simple dusk effect
+                this.ctx.save();
+                this.ctx.globalCompositeOperation = "multiply";
+                this.ctx.fillStyle = "rgba(8, 10, 16, 0.4)";
+                this.ctx.fillRect(x, y, w, h);
+                this.ctx.restore();
+
+                // Add vignette
+                const gradient = this.ctx.createRadialGradient(
+                    x + w / 2, y + h * 0.55, Math.min(w, h) * 0.22,
+                    x + w / 2, y + h * 0.55, Math.max(w, h) * 0.78
+                );
+                gradient.addColorStop(0, "rgba(0,0,0,0)");
+                gradient.addColorStop(1, "rgba(0,0,0,0.3)");
+                
+                this.ctx.save();
+                this.ctx.globalCompositeOperation = "multiply";
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(x, y, w, h);
+                this.ctx.restore();
+            }
+
+            renderLights() {
+                this.lightRuns.forEach(run => {
+                    if (!run.visible || run.points.length < 2) return;
+                    this.renderLightRun(run);
+                });
+
+                // Render current run
+                if (this.currentRun.length > 0) {
+                    const tempRun = {
+                        points: this.currentRun.map(p => this.denormalizePoint(p)),
+                        pattern: this.settings.pattern,
+                        spacing: this.settings.spacing,
+                        brightness: this.settings.brightness,
+                        visible: true
+                    };
+                    this.renderLightRun(tempRun);
+                }
+            }
+
+            renderLightRun(run) {
+                const colors = this.getPatternColors(run.pattern);
+                const points = run.points;
+                const spacing = Math.max(8, run.spacing);
+                const brightness = run.brightness / 100;
+
+                // Sample points along the path
+                const samples = this.sampleAlongPath(points, spacing);
+
+                samples.forEach((point, index) => {
+                    const color = colors[index % colors.length];
+                    this.drawBulb(point.x, point.y, color, brightness);
+                });
+            }
+
+            renderMiniLights() {
+                this.miniLightAreas.forEach(area => {
+                    if (!area.visible || area.points.length < 3) return;
+                    this.renderMiniLightArea(area);
+                });
+            }
+
+            renderMiniLightArea(area) {
+                const colors = this.getPatternColors(area.pattern);
+                const polygon = area.points.map(p => this.denormalizePoint(p));
+                const brightness = area.brightness / 100;
+                
+                // Generate random points within polygon
+                const numLights = Math.floor((area.density / 100) * this.calculatePolygonArea(polygon) / 40);
+                const lightPositions = this.generatePointsInPolygon(polygon, numLights);
+
+                lightPositions.forEach((point, index) => {
+                    const color = colors[index % colors.length];
+                    this.drawMiniLight(point.x, point.y, color, brightness, area.size);
+                });
+            }
+
+            renderCurrentTrace() {
+                if (this.currentMiniTrace.length > 0) {
+                    const denorm = this.currentMiniTrace.map(p => this.denormalizePoint(p));
+                    
+                    this.ctx.save();
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.setLineDash([5, 5]);
+                    this.ctx.beginPath();
+                    denorm.forEach((point, index) => {
+                        if (index === 0) {
+                            this.ctx.moveTo(point.x, point.y);
+                        } else {
+                            this.ctx.lineTo(point.x, point.y);
+                        }
+                    });
+                    this.ctx.stroke();
+                    this.ctx.restore();
+                }
+            }
+
+            drawBulb(x, y, color, brightness) {
+                const bulbWidth = 4;
+                const bulbHeight = 6;
+                
+                this.ctx.save();
+                
+                // Main bulb body
+                this.ctx.fillStyle = color;
+                this.ctx.globalAlpha = brightness * 0.85;
+                this.ctx.beginPath();
+                this.ctx.ellipse(x, y, bulbWidth * 0.5, bulbHeight * 0.5, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Bright center
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                this.ctx.globalAlpha = brightness;
+                this.ctx.beginPath();
+                this.ctx.ellipse(x, y, bulbWidth * 0.2, bulbHeight * 0.2, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Glow effect
+                const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, 8);
+                gradient.addColorStop(0, this.withAlpha(color, 0.8 * brightness));
+                gradient.addColorStop(0.5, this.withAlpha(color, 0.3 * brightness));
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                this.ctx.globalCompositeOperation = 'screen';
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, 8, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                this.ctx.restore();
+            }
+
+            drawMiniLight(x, y, color, brightness, size) {
+                this.ctx.save();
+                
+                // Main light
+                this.ctx.fillStyle = color;
+                this.ctx.globalAlpha = brightness * 0.9;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, size, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Bright center
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                this.ctx.globalAlpha = brightness;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, size * 0.4, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                // Glow
+                const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size * 4);
+                gradient.addColorStop(0, this.withAlpha(color, 0.6 * brightness));
+                gradient.addColorStop(0.4, this.withAlpha(color, 0.3 * brightness));
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                
+                this.ctx.globalCompositeOperation = 'screen';
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, size * 4, 0, Math.PI * 2);
+                this.ctx.fill();
+                
+                this.ctx.restore();
+            }
+
+            getPatternColors(pattern) {
+                const colors = {
+                    'warm-white': ['rgb(255, 180, 80)'],
+                    'cool-white': ['rgb(240, 248, 255)'],
+                    'multi-color': ['rgb(200, 40, 40)', 'rgb(40, 150, 60)', 'rgb(40, 100, 200)', 'rgb(255, 180, 40)', 'rgb(255, 120, 40)'],
+                    'candy-cane': ['rgb(255, 180, 80)', 'rgb(200, 40, 40)'],
+                    'icicle': ['rgb(240, 248, 255)', 'rgb(40, 120, 220)'],
+                    'blue': ['rgb(40, 100, 200)'],
+                    'halloween': ['rgb(255, 120, 40)', 'rgb(120, 40, 200)'],
+                    'orange': ['rgb(255, 120, 40)']
+                };
+                return colors[pattern] || colors['warm-white'];
+            }
+
+            sampleAlongPath(points, spacing) {
+                if (points.length < 2) return [];
+                
+                const samples = [];
+                let totalDistance = 0;
+                const segments = [];
+                
+                for (let i = 0; i < points.length - 1; i++) {
+                    const dist = this.distance(points[i], points[i + 1]);
+                    segments.push(dist);
+                    totalDistance += dist;
+                }
+                
+                if (totalDistance === 0) return [];
+                
+                let currentDistance = 0;
+                let targetDistance = 0;
+                
+                for (let i = 0; i < points.length - 1; i++) {
+                    const segmentLength = segments[i];
+                    const start = points[i];
+                    const end = points[i + 1];
+                    
+                    while (currentDistance + segmentLength >= targetDistance) {
+                        const t = (targetDistance - currentDistance) / segmentLength;
+                        const x = start.x + (end.x - start.x) * t;
+                        const y = start.y + (end.y - start.y) * t;
+                        
+                        samples.push({ x, y });
+                        targetDistance += spacing;
+                    }
+                    
+                    currentDistance += segmentLength;
+                }
+                
+                return samples;
+            }
+
+            generatePointsInPolygon(polygon, numPoints) {
+                const points = [];
+                
+                // Find bounding box
+                let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+                for (const point of polygon) {
+                    minX = Math.min(minX, point.x);
+                    maxX = Math.max(maxX, point.x);
+                    minY = Math.min(minY, point.y);
+                    maxY = Math.max(maxY, point.y);
+                }
+                
+                let attempts = 0;
+                const maxAttempts = numPoints * 10;
+                
+                while (points.length < numPoints && attempts < maxAttempts) {
+                    const x = minX + Math.random() * (maxX - minX);
+                    const y = minY + Math.random() * (maxY - minY);
+                    
+                    if (this.isPointInPolygon({ x, y }, polygon)) {
+                        points.push({ x, y });
+                    }
+                    attempts++;
+                }
+                
+                return points;
+            }
+
+            isPointInPolygon(point, polygon) {
+                let inside = false;
+                const { x, y } = point;
+                
+                for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                    const xi = polygon[i].x, yi = polygon[i].y;
+                    const xj = polygon[j].x, yj = polygon[j].y;
+                    
+                    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+                        inside = !inside;
+                    }
+                }
+                
+                return inside;
+            }
+
+            calculatePolygonArea(polygon) {
+                if (polygon.length < 3) return 0;
+                
+                let area = 0;
+                for (let i = 0; i < polygon.length; i++) {
+                    const j = (i + 1) % polygon.length;
+                    area += polygon[i].x * polygon[j].y;
+                    area -= polygon[j].x * polygon[i].y;
+                }
+                return Math.abs(area) / 2;
+            }
+
+            getNormalizedPoint(clientX, clientY) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+
+                const cx = (clientX - rect.left) * scaleX;
+                const cy = (clientY - rect.top) * scaleY;
+
+                const { x, y, w, h } = this.drawRect;
+                if (cx < x || cy < y || cx > x + w || cy > y + h) return null;
+
+                return { x: (cx - x) / w, y: (cy - y) / h };
+            }
+
+            denormalizePoint(point) {
+                const { x, y, w, h } = this.drawRect;
+                return {
+                    x: x + point.x * w,
+                    y: y + point.y * h
+                };
+            }
+
+            handleCanvasClick(event) {
+                if (this.showBefore || Date.now() < this.cooldownUntil) return;
+                
+                const pt = this.getNormalizedPoint(event.clientX, event.clientY);
+                if (!pt) return;
+
+                if (this.drawingMode === 'tracing-mini') return;
+
+                if (this.drawingMode === 'idle' && !event.shiftKey) {
+                    this.currentRun = [pt];
+                    this.drawingMode = 'drawing-string';
+                    this.updateDrawingStatus();
+                } else if (this.drawingMode === 'drawing-string' && !event.shiftKey) {
+                    const lastPoint = this.currentRun[this.currentRun.length - 1];
+                    if (!lastPoint || Math.abs(pt.x - lastPoint.x) > 0.001 || Math.abs(pt.y - lastPoint.y) > 0.001) {
+                        this.currentRun.push(pt);
+                        this.drawCanvas();
+                    }
+                }
+            }
+
+            handleCanvasDoubleClick() {
+                if (this.drawingMode === 'drawing-string' && this.currentRun.length >= 2) {
+                    const newRun = {
+                        id: `run-${Date.now()}`,
+                        points: [...this.currentRun],
+                        pattern: this.settings.pattern,
+                        spacing: this.settings.spacing,
+                        brightness: this.settings.brightness,
+                        visible: true
+                    };
+
+                    this.executeCommand({ kind: 'create-run', run: newRun });
+                    this.currentRun = [];
+                    this.drawingMode = 'idle';
+                    this.updateDrawingStatus();
+                }
+            }
+
+            handleCanvasMouseDown(event) {
+                if (event.shiftKey && this.drawingMode === 'idle' && !Date.now() < this.cooldownUntil) {
+                    const pt = this.getNormalizedPoint(event.clientX, event.clientY);
+                    if (pt) {
+                        this.currentMiniTrace = [pt];
+                        this.drawingMode = 'tracing-mini';
+                        this.isMouseDown = true;
+                        this.updateDrawingStatus();
+                    }
+                }
+            }
+
+            handleCanvasMouseMove(event) {
+                if (!this.isMouseDown || this.drawingMode !== 'tracing-mini') return;
+                
+                const pt = this.getNormalizedPoint(event.clientX, event.clientY);
+                if (!pt) return;
+
+                const lastPoint = this.currentMiniTrace[this.currentMiniTrace.length - 1];
+                if (!lastPoint || Math.abs(pt.x - lastPoint.x) > 0.005 || Math.abs(pt.y - lastPoint.y) > 0.005) {
+                    this.currentMiniTrace.push(pt);
+                    this.drawCanvas();
+                }
+            }
+
+            handleCanvasMouseUp() {
+                if (this.drawingMode === 'tracing-mini' && this.currentMiniTrace.length >= 3) {
+                    const newArea = {
+                        id: `mini-${Date.now()}`,
+                        points: [...this.currentMiniTrace],
+                        pattern: this.settings.miniPattern,
+                        size: this.settings.miniSize,
+                        density: this.settings.miniDensity,
+                        brightness: this.settings.miniBrightness,
+                        visible: true
+                    };
+
+                    this.executeCommand({ kind: 'create-area', area: newArea });
+                    this.currentMiniTrace = [];
+                    this.drawingMode = 'idle';
+                    this.cooldownUntil = Date.now() + 100;
+                    this.updateDrawingStatus();
+                }
+                this.isMouseDown = false;
+            }
+
+            updateDrawingStatus() {
+                const drawingStatus = document.getElementById('drawing-status');
+                const tracingStatus = document.getElementById('tracing-status');
+                
+                drawingStatus.classList.toggle('hidden', this.drawingMode !== 'drawing-string');
+                tracingStatus.classList.toggle('hidden', this.drawingMode !== 'tracing-mini');
+            }
+
+            executeCommand(command) {
+                this.applyCommand(command);
+                this.history.past.push(command);
+                this.history.future = [];
+                this.updateUI();
+            }
+
+            applyCommand(command) {
+                switch (command.kind) {
+                    case 'create-run':
+                        this.lightRuns.push(command.run);
+                        break;
+                    case 'delete-run':
+                        this.lightRuns = this.lightRuns.filter(run => run.id !== command.run.id);
+                        break;
+                    case 'update-run':
+                        this.lightRuns = this.lightRuns.map(run => 
+                            run.id === command.after.id ? command.after : run
+                        );
+                        break;
+                    case 'create-area':
+                        this.miniLightAreas.push(command.area);
+                        break;
+                    case 'delete-area':
+                        this.miniLightAreas = this.miniLightAreas.filter(area => area.id !== command.area.id);
+                        break;
+                    case 'update-area':
+                        this.miniLightAreas = this.miniLightAreas.map(area => 
+                            area.id === command.after.id ? command.after : area
+                        );
+                        break;
+                }
+                this.drawCanvas();
+            }
+
+            reverseCommand(command) {
+                switch (command.kind) {
+                    case 'create-run':
+                        return { kind: 'delete-run', run: command.run };
+                    case 'delete-run':
+                        return { kind: 'create-run', run: command.run };
+                    case 'update-run':
+                        return { kind: 'update-run', before: command.after, after: command.before };
+                    case 'create-area':
+                        return { kind: 'delete-area', area: command.area };
+                    case 'delete-area':
+                        return { kind: 'create-area', area: command.area };
+                    case 'update-area':
+                        return { kind: 'update-area', before: command.after, after: command.before };
+                }
+            }
+
+            undo() {
+                if (this.history.past.length === 0) return;
+                
+                const lastCommand = this.history.past.pop();
+                const reverseCmd = this.reverseCommand(lastCommand);
+                this.applyCommand(reverseCmd);
+                this.history.future.unshift(lastCommand);
+                this.updateUI();
+            }
+
+            redo() {
+                if (this.history.future.length === 0) return;
+                
+                const nextCommand = this.history.future.shift();
+                this.applyCommand(nextCommand);
+                this.history.past.push(nextCommand);
+                this.updateUI();
+            }
+
+            clearAll() {
+                const commands = [
+                    ...this.lightRuns.map(run => ({ kind: 'delete-run', run })),
+                    ...this.miniLightAreas.map(area => ({ kind: 'delete-area', area }))
+                ];
+                
+                commands.forEach(command => this.applyCommand(command));
+                this.history.past.push(...commands);
+                this.history.future = [];
+                this.updateUI();
+            }
+
+            updateAllRuns() {
+                this.lightRuns.forEach(run => {
+                    run.pattern = this.settings.pattern;
+                    run.spacing = this.settings.spacing;
+                    run.brightness = this.settings.brightness;
+                });
+                this.drawCanvas();
+            }
+
+            updateAllMiniAreas() {
+                this.miniLightAreas.forEach(area => {
+                    area.pattern = this.settings.miniPattern;
+                    area.size = this.settings.miniSize;
+                    area.density = this.settings.miniDensity;
+                    area.brightness = this.settings.miniBrightness;
+                });
+                this.drawCanvas();
+            }
+
+            toggleBeforeAfter(showBefore) {
+                this.showBefore = showBefore;
+                
+                const beforeBtn = document.getElementById('before-btn');
+                const afterBtn = document.getElementById('after-btn');
+                
+                if (showBefore) {
+                    beforeBtn.classList.add('bg-gray-700', 'text-white');
+                    beforeBtn.classList.remove('text-gray-300');
+                    afterBtn.classList.remove('bg-gray-700', 'text-white');
+                    afterBtn.classList.add('text-gray-300');
+                } else {
+                    afterBtn.classList.add('bg-gray-700', 'text-white');
+                    afterBtn.classList.remove('text-gray-300');
+                    beforeBtn.classList.remove('bg-gray-700', 'text-white');
+                    beforeBtn.classList.add('text-gray-300');
+                }
+                
+                this.drawCanvas();
+            }
+
+            updateUI() {
+                // Update button states
+                document.getElementById('undo-btn').disabled = this.history.past.length === 0;
+                document.getElementById('redo-btn').disabled = this.history.future.length === 0;
+                
+                // Update lists
+                this.updateRunsList();
+                this.updateAreasList();
+            }
+
+            updateRunsList() {
+                const panel = document.getElementById('light-runs-panel');
+                const list = document.getElementById('runs-list');
+                const count = document.getElementById('runs-count');
+                
+                count.textContent = this.lightRuns.length;
+                panel.classList.toggle('hidden', this.lightRuns.length === 0);
+                
+                list.innerHTML = '';
+                this.lightRuns.forEach((run, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between bg-gray-800 p-2 rounded';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${this.getPatternColors(run.pattern)[0]}"></div>
+                            <span class="text-sm text-gray-300">Run ${index + 1}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button class="toggle-btn p-1 h-auto hover:bg-gray-700 rounded" data-id="${run.id}">
+                                <i data-lucide="${run.visible ? 'eye' : 'eye-off'}" class="w-3 h-3 ${run.visible ? 'text-green-400' : 'text-gray-400'}"></i>
+                            </button>
+                            <button class="delete-btn p-1 h-auto text-red-400 hover:text-red-300 hover:bg-gray-700 rounded" data-id="${run.id}">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    item.querySelector('.toggle-btn').addEventListener('click', () => this.toggleRunVisibility(run.id));
+                    item.querySelector('.delete-btn').addEventListener('click', () => this.deleteRun(run.id));
+                    
+                    list.appendChild(item);
+                });
+                
+                lucide.createIcons();
+            }
+
+            updateAreasList() {
+                const panel = document.getElementById('mini-areas-panel');
+                const list = document.getElementById('areas-list');
+                const count = document.getElementById('areas-count');
+                
+                count.textContent = this.miniLightAreas.length;
+                panel.classList.toggle('hidden', this.miniLightAreas.length === 0);
+                
+                list.innerHTML = '';
+                this.miniLightAreas.forEach((area, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between bg-gray-800 p-2 rounded';
+                    item.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full" style="background-color: ${this.getPatternColors(area.pattern)[0]}"></div>
+                            <span class="text-sm text-gray-300">Area ${index + 1}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button class="toggle-btn p-1 h-auto hover:bg-gray-700 rounded" data-id="${area.id}">
+                                <i data-lucide="${area.visible ? 'eye' : 'eye-off'}" class="w-3 h-3 ${area.visible ? 'text-green-400' : 'text-gray-400'}"></i>
+                            </button>
+                            <button class="delete-btn p-1 h-auto text-red-400 hover:text-red-300 hover:bg-gray-700 rounded" data-id="${area.id}">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    item.querySelector('.toggle-btn').addEventListener('click', () => this.toggleAreaVisibility(area.id));
+                    item.querySelector('.delete-btn').addEventListener('click', () => this.deleteArea(area.id));
+                    
+                    list.appendChild(item);
+                });
+                
+                lucide.createIcons();
+            }
+
+            toggleRunVisibility(runId) {
+                const run = this.lightRuns.find(r => r.id === runId);
+                if (run) {
+                    const command = {
+                        kind: 'update-run',
+                        before: { ...run },
+                        after: { ...run, visible: !run.visible }
+                    };
+                    this.executeCommand(command);
+                }
+            }
+
+            deleteRun(runId) {
+                const run = this.lightRuns.find(r => r.id === runId);
+                if (run) {
+                    this.executeCommand({ kind: 'delete-run', run });
+                }
+            }
+
+            toggleAreaVisibility(areaId) {
+                const area = this.miniLightAreas.find(a => a.id === areaId);
+                if (area) {
+                    const command = {
+                        kind: 'update-area',
+                        before: { ...area },
+                        after: { ...area, visible: !area.visible }
+                    };
+                    this.executeCommand(command);
+                }
+            }
+
+            deleteArea(areaId) {
+                const area = this.miniLightAreas.find(a => a.id === areaId);
+                if (area) {
+                    this.executeCommand({ kind: 'delete-area', area });
+                }
+            }
+
+            cancelCurrentAction() {
+                this.currentRun = [];
+                this.currentMiniTrace = [];
+                this.drawingMode = 'idle';
+                this.isMouseDown = false;
+                this.updateDrawingStatus();
+                this.drawCanvas();
+            }
+
+            resetTool() {
+                this.uploadedImage = null;
+                this.lightRuns = [];
+                this.miniLightAreas = [];
+                this.currentRun = [];
+                this.currentMiniTrace = [];
+                this.drawingMode = 'idle';
+                this.history = { past: [], future: [] };
+                this.showBefore = false;
+                
+                document.getElementById('upload-area').classList.remove('hidden');
+                document.getElementById('canvas-area').classList.add('hidden');
+                document.getElementById('bottom-controls').classList.add('hidden');
+                document.getElementById('side-panel').classList.add('hidden');
+                document.getElementById('new-photo-btn').classList.add('hidden');
+                document.getElementById('export-btn').disabled = true;
+                document.getElementById('file-input').value = '';
+                
+                this.updateUI();
+            }
+
+            exportImage() {
+                if (!this.uploadedImage) return;
+                
+                const link = document.createElement('a');
+                link.download = 'holiday-lights-mockup-v2.png';
+                link.href = this.canvas.toDataURL('image/png');
+                link.click();
+            }
+
+            // Utility functions
+            distance(a, b) {
+                return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+            }
+
+            withAlpha(color, alpha) {
+                const match = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                if (match) {
+                    return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${Math.max(0, Math.min(1, alpha))})`;
+                }
+                return color;
+            }
+        }
+
+        // Initialize the tool when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.holidayLightMockupV2 = new HolidayLightMockupV2();
+        });
+    </script>
+</body>
+</html>
