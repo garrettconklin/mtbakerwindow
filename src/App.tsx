@@ -1,5 +1,4 @@
 import ImageUpload from './elements/ImageUpload.js'
-import PropertiesPanel from './elements/PropertiesPanel.js'
 import styles from './App.module.css'
 
 const App = () => {
