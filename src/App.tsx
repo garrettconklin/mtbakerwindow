@@ -8,7 +8,6 @@ const App = () => {
       <h1 className={styles.title}>Mt Baker Window</h1>
       <div className={styles.content}>
         <ImageUpload />
-        <PropertiesPanel />
       </div>
     </div>
   )

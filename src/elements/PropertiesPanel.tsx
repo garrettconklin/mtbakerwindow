@@ -1,12 +1,46 @@
 import { useAppContext } from '../useAppContext.js'
 import styles from './PropertiesPanel.module.css'
 
-const PropertiesPanel = () => {
+interface PropertiesPanelProps {
+  canvas: HTMLCanvasElement | null;
+}
+
+const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
   const { state, patchState } = useAppContext()
+
+  const handleDownload = () => {
+    if (!canvas) return
+
+    // Create a temporary link element
+    const link = document.createElement('a')
+    link.download = 'christmas-light-plan.png'
+    
+    // Convert canvas to data URL
+    const dataURL = canvas.toDataURL('image/png')
+    link.href = dataURL
+    
+    // Trigger download
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   return (
     <div className={styles.panel}>
       <h2 className={styles.title}>Light Properties</h2>
+      
+      {/* Download Section */}
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Export</h3>
+        
+        <button
+          onClick={handleDownload}
+          disabled={!canvas}
+          className={styles.downloadButton}
+        >
+          📸 Download Image
+        </button>
+      </div>
       
       {/* Line Light Properties */}
       <div className={styles.section}>

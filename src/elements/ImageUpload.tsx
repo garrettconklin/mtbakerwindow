@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../useAppContext.js'
 import { createStrand } from '../state/createStrand.js'
 import { updatePointPosition } from '../state/updatePointPosition.js'
@@ -7,6 +7,7 @@ import { deletePoint } from '../state/deletePoint.js'
 import { createMesh } from '../state/createMesh.js'
 import Point from './Point.js'
 import LinesCanvas from './LinesCanvas.js'
+import PropertiesPanel from './PropertiesPanel.js'
 import styles from './ImageUpload.module.css'
 
 const MESH_RATIO_THRESHOLD = 0.25;
@@ -15,8 +16,27 @@ const CLICK_THRESHOLD = 5; // pixels - distance to consider it a click vs drag
 
 const ImageUpload = () => {
   const { state, patchState } = useAppContext()
+  const [loadedImage, setLoadedImage] = useState<HTMLImageElement | null>(null)
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
   
   const minPointDistance = 10 // pixels
+
+  // Load image when state.image changes
+  useEffect(() => {
+    if (state.image) {
+      const img = new Image()
+      img.onload = () => {
+        setLoadedImage(img)
+      }
+      img.src = state.image
+    } else {
+      setLoadedImage(null)
+    }
+  }, [state.image])
+
+  const handleCanvasReady = (canvasElement: HTMLCanvasElement) => {
+    setCanvas(canvasElement)
+  }
 
   // Calculate the area of a polygon using the shoelace formula
   const calculatePolygonArea = (points: { x: number; y: number }[]) => {
@@ -93,9 +113,9 @@ const ImageUpload = () => {
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only handle clicks on the container itself, not on child elements
     if (e.target !== e.currentTarget) return
+    if (!canvas) return
     
-    const container = e.currentTarget
-    const rect = container.getBoundingClientRect()
+    const rect = canvas.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     
@@ -112,9 +132,9 @@ const ImageUpload = () => {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (state.draggingPointIndex === null) return
+    if (!canvas) return
     
-    const container = e.currentTarget
-    const rect = container.getBoundingClientRect()
+    const rect = canvas.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     
@@ -272,29 +292,28 @@ const ImageUpload = () => {
     e.stopPropagation()
   }
 
-  return state.image ? (
-    <div 
-      className={styles.imageContainer}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onDragStart={preventDragDrop}
-      onDrop={preventDragDrop}
-      onDragOver={preventDragDrop}
-    >
-      <img 
-        src={state.image} 
-        alt="Your house" 
-        className={styles.image}
-        draggable={false}
-      />
-      <LinesCanvas />
-      {state.points.map((_, index) => (
-        <Point key={index} index={index} />
-      ))}
-    </div>
-  ) : (
+  return (
+    <>
+      {state.image ? (
+        <div 
+          className={styles.imageContainer}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onDragStart={preventDragDrop}
+          onDrop={preventDragDrop}
+          onDragOver={preventDragDrop}
+        >
+          <LinesCanvas 
+            image={loadedImage}
+            onCanvasReady={handleCanvasReady}
+          />
+          {state.points.map((_, index) => (
+            <Point key={index} index={index} canvas={canvas} />
+          ))}
+        </div>
+      ) : (
     <label
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -316,6 +335,9 @@ const ImageUpload = () => {
         Click to browse or drag and drop an image here
       </div>
     </label>
+      )}
+      <PropertiesPanel canvas={canvas} />
+    </>
   )
 }
 
