@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.title {
+  text-align: center;
+  margin: 20px 0;
+  padding: 0 320px; /* Account for properties panel width */
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
