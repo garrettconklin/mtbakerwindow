@@ -118,43 +118,35 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
         const baseSpacing = 8 // pixels between lights at density 1.0
         const lightSpacing = baseSpacing / state.meshLightDensity
         
-        // Generate organic light distribution using multiple overlapping patterns
+        // Generate organic light distribution
         const lightPositions: { x: number; y: number }[] = []
         
-        // Create multiple overlapping irregular patterns
-        const patterns = [
-          { offsetX: 0, offsetY: 0, spacing: lightSpacing },
-          { offsetX: lightSpacing * 0.3, offsetY: lightSpacing * 0.2, spacing: lightSpacing * 1.4 },
-          { offsetX: lightSpacing * 0.7, offsetY: lightSpacing * 0.8, spacing: lightSpacing * 1.1 }
-        ]
+        // Simple grid with organic variation
+        const cols = Math.max(1, Math.floor(meshWidth / lightSpacing))
+        const rows = Math.max(1, Math.floor(meshHeight / lightSpacing))
         
-        patterns.forEach(pattern => {
-          const cols = Math.max(1, Math.floor(meshWidth / pattern.spacing))
-          const rows = Math.max(1, Math.floor(meshHeight / pattern.spacing))
-          
-          for (let row = 0; row <= rows; row++) {
-            for (let col = 0; col <= cols; col++) {
-              // Add significant irregularity
-              const noise1 = ((col * 73 + row * 137) % 1000) / 1000
-              const noise2 = ((col * 149 + row * 211) % 1000) / 1000
-              const noise3 = ((col * 257 + row * 313) % 1000) / 1000
+        for (let row = 0; row <= rows; row++) {
+          for (let col = 0; col <= cols; col++) {
+            // Add organic irregularity
+            const noise1 = ((col * 73 + row * 137) % 1000) / 1000
+            const noise2 = ((col * 149 + row * 211) % 1000) / 1000
+            const noise3 = ((col * 257 + row * 313) % 1000) / 1000
+            
+            const offsetX = (noise1 - 0.5) * lightSpacing * 0.6
+            const offsetY = (noise2 - 0.5) * lightSpacing * 0.6
+            const skip = noise3 > 0.8 // Skip some lights for organic feel
+            
+            if (!skip) {
+              const lightX = minX + (col * lightSpacing) + offsetX
+              const lightY = minY + (row * lightSpacing) + offsetY
               
-              const offsetX = (noise1 - 0.5) * pattern.spacing * 0.8
-              const offsetY = (noise2 - 0.5) * pattern.spacing * 0.8
-              const skip = noise3 > 0.7 // Randomly skip some lights for more organic feel
-              
-              if (!skip) {
-                const lightX = minX + pattern.offsetX + (col * pattern.spacing) + offsetX
-                const lightY = minY + pattern.offsetY + (row * pattern.spacing) + offsetY
-                
-                lightPositions.push({ x: lightX, y: lightY })
-              }
+              lightPositions.push({ x: lightX, y: lightY })
             }
           }
-        })
+        }
         
         // Draw lights within the mesh polygon
-        lightPositions.forEach(pos => {
+        lightPositions.forEach((pos, index) => {
           const lightX = pos.x
           const lightY = pos.y
             
@@ -166,12 +158,17 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
                 lightX, lightY, 12           // Center point, outer radius (smaller for mesh)
               )
               
+              // Get the color for this light position - alternate every bulb
+              const colorIndex = index % state.meshLightColor.length
+              const lightColor = state.meshLightColor[colorIndex]
+              const colorString = `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, ${lightColor[3] / 255})`
+              
               // Add color stops for realistic light falloff
               gradient.addColorStop(0, '#FFFFFF')                      // Over-bright white center
-              gradient.addColorStop(0.1, state.meshLightColor)         // Quick transition to mesh color
-              gradient.addColorStop(0.2, state.meshLightColor + '80')  // Fade to 50% opacity
-              gradient.addColorStop(0.5, state.meshLightColor + '40')  // Fade to 25% opacity
-              gradient.addColorStop(1, state.meshLightColor + '00')    // Transparent edge
+              gradient.addColorStop(0.1, colorString)                  // Quick transition to mesh color
+              gradient.addColorStop(0.2, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0.5)`)  // Fade to 50% opacity
+              gradient.addColorStop(0.5, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0.25)`) // Fade to 25% opacity
+              gradient.addColorStop(1, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0)`)      // Transparent edge
               
               // Set blending mode for realistic light interaction
               ctx.globalCompositeOperation = 'screen'
@@ -239,12 +236,17 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
             lightX, lightY, 15           // Center point, outer radius (smaller)
           )
           
+          // Get the color for this light position - alternate every bulb
+          const colorIndex = i % state.lineLightColor.length
+          const lightColor = state.lineLightColor[colorIndex]
+          const colorString = `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, ${lightColor[3] / 255})`
+          
           // Add color stops for realistic light falloff
           gradient.addColorStop(0, '#FFFFFF')                      // Over-bright white center (actual bulb)
-          gradient.addColorStop(0.1, state.lineLightColor)         // Quick transition to light color
-          gradient.addColorStop(0.2, state.lineLightColor + '80')  // Fade to 50% opacity
-          gradient.addColorStop(0.5, state.lineLightColor + '40')  // Fade to 25% opacity
-          gradient.addColorStop(1, state.lineLightColor + '00')    // Transparent edge
+          gradient.addColorStop(0.1, colorString)                  // Quick transition to light color
+          gradient.addColorStop(0.2, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0.5)`)  // Fade to 50% opacity
+          gradient.addColorStop(0.5, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0.25)`) // Fade to 25% opacity
+          gradient.addColorStop(1, `rgba(${lightColor[0]}, ${lightColor[1]}, ${lightColor[2]}, 0)`)      // Transparent edge
           
           // Set blending mode for realistic light interaction
           ctx.globalCompositeOperation = 'screen'

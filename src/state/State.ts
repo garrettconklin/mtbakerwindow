@@ -43,8 +43,8 @@ export type State = {
    */
   readonly lineLightDensity: number;
 
-  readonly lineLightColor: string;
-  readonly meshLightColor: string;
+            readonly lineLightColor: number[][];
+            readonly meshLightColor: number[][];
   /**
    * Number from 0-1 which controls the density of lights within each mesh.
    */
@@ -68,11 +68,18 @@ export const DEFAULT_STATE: State = {
   draggingPointIndex: null,
   creatingStrandFromIndex: null,
   selectedPointIndex: null,
-  lineLightDensity: 0.6,
-  lineLightColor: '#FFD700',
-  meshLightColor: '#FFD700',
-  meshLightDensity: 0.4,
-  meshes: [],
+            lineLightDensity: 0.6,
+            lineLightColor: [[255, 215, 0, 255]], // Golden Yellow
+            meshLightColor: [[255, 215, 0, 255]], // Golden Yellow
+            meshLightDensity: 0.4,
+  meshes: [
+    // Sample mesh for testing - a simple triangle
+    [
+      { x: 100, y: 100 },
+      { x: 200, y: 100 },
+      { x: 150, y: 200 }
+    ]
+  ],
   dragPath: [],
   dragMode: null,
 }

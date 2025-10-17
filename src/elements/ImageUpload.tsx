@@ -10,7 +10,7 @@ import LinesCanvas from './LinesCanvas.js'
 import PropertiesPanel from './PropertiesPanel.js'
 import styles from './ImageUpload.module.css'
 
-const MESH_RATIO_THRESHOLD = 0.25;
+const MESH_RATIO_THRESHOLD = 0.15;
 const MERGE_THRESHOLD = 10;
 const CLICK_THRESHOLD = 5; // pixels - distance to consider it a click vs drag
 
@@ -51,22 +51,35 @@ const ImageUpload = () => {
     return Math.abs(area / 2)
   }
 
-  // Calculate max distance from first point
-  const calculateMaxDistance = (points: { x: number; y: number }[]) => {
-    if (points.length === 0) return 0
+  // Calculate the "span" of the path - either max distance between any two points
+  // or the diagonal of the bounding box, whichever is larger
+  const calculatePathSpan = (points: { x: number; y: number }[]) => {
+    if (points.length < 2) return 0
     
-    const first = points[0]
-    let maxDist = 0
+    // Calculate bounding box
+    const minX = Math.min(...points.map(p => p.x))
+    const maxX = Math.max(...points.map(p => p.x))
+    const minY = Math.min(...points.map(p => p.y))
+    const maxY = Math.max(...points.map(p => p.y))
     
-    for (let i = 1; i < points.length; i++) {
-      const dist = Math.sqrt(
-        Math.pow(points[i].x - first.x, 2) + 
-        Math.pow(points[i].y - first.y, 2)
-      )
-      maxDist = Math.max(maxDist, dist)
+    const boundingBoxDiagonal = Math.sqrt(
+      Math.pow(maxX - minX, 2) + Math.pow(maxY - minY, 2)
+    )
+    
+    // Also check max distance between any two points
+    let maxPointDistance = 0
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        const dist = Math.sqrt(
+          Math.pow(points[i].x - points[j].x, 2) + 
+          Math.pow(points[i].y - points[j].y, 2)
+        )
+        maxPointDistance = Math.max(maxPointDistance, dist)
+      }
     }
     
-    return maxDist
+    // Use the larger of the two as our "span" measurement
+    return Math.max(boundingBoxDiagonal, maxPointDistance)
   }
 
   const handleFileSelect = (file: File | undefined) => {
@@ -160,17 +173,16 @@ const ImageUpload = () => {
           newDragPath = [...dragPath, currentPoint]
           
           // Check if path forms a mesh (area-based detection)
-          if (newDragPath.length > 3 && state.dragMode === 'strand') {
+          if (newDragPath.length > 4 && state.dragMode === 'strand') {
             const area = calculatePolygonArea(newDragPath)
-            const maxDistance = calculateMaxDistance(newDragPath)
+            const pathSpan = calculatePathSpan(newDragPath)
             
-            // Normalize: area / (maxDistance^2)
+            // Normalize: area / (span^2)
             // For a straight line, this ratio is close to 0
             // For a filled shape, this ratio is larger
-            const ratio = maxDistance > 0 ? area / (maxDistance * maxDistance) : 0
+            const ratio = pathSpan > 0 ? area / (pathSpan * pathSpan) : 0
             
             // Switch to mesh mode when area ratio indicates a filled shape
-            
             if (ratio >= MESH_RATIO_THRESHOLD) {
               newDragMode = 'mesh'
             }

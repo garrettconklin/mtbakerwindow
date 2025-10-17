@@ -1,4 +1,5 @@
 import { useAppContext } from '../useAppContext.js'
+import ColorDropdown from './ColorDropdown.js'
 import styles from './PropertiesPanel.module.css'
 
 interface PropertiesPanelProps {
@@ -60,15 +61,13 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           <span className={styles.value}>{state.lineLightDensity.toFixed(1)}</span>
         </div>
         
-        <div className={styles.property}>
-          <label className={styles.label}>Color</label>
-          <input
-            type="color"
-            value={state.lineLightColor}
-            onChange={(e) => patchState({ lineLightColor: e.target.value })}
-            className={styles.colorInput}
-          />
-        </div>
+                  <div className={styles.property}>
+                    <label className={styles.label}>Color</label>
+                    <ColorDropdown
+                      value={state.lineLightColor}
+                      onChange={(color) => patchState({ lineLightColor: color })}
+                    />
+                  </div>
       </div>
       
       {/* Mesh Light Properties */}
@@ -89,15 +88,13 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           <span className={styles.value}>{state.meshLightDensity.toFixed(1)}</span>
         </div>
         
-        <div className={styles.property}>
-          <label className={styles.label}>Color</label>
-          <input
-            type="color"
-            value={state.meshLightColor}
-            onChange={(e) => patchState({ meshLightColor: e.target.value })}
-            className={styles.colorInput}
-          />
-        </div>
+                  <div className={styles.property}>
+                    <label className={styles.label}>Color</label>
+                    <ColorDropdown
+                      value={state.meshLightColor}
+                      onChange={(color) => patchState({ meshLightColor: color })}
+                    />
+                  </div>
       </div>
     </div>
   )
