@@ -72,14 +72,7 @@ export const DEFAULT_STATE: State = {
             lineLightColor: [[255, 215, 0, 255]], // Golden Yellow
             meshLightColor: [[255, 215, 0, 255]], // Golden Yellow
             meshLightDensity: 0.4,
-  meshes: [
-    // Sample mesh for testing - a simple triangle
-    [
-      { x: 100, y: 100 },
-      { x: 200, y: 100 },
-      { x: 150, y: 200 }
-    ]
-  ],
+  meshes: [],
   dragPath: [],
   dragMode: null,
 }
