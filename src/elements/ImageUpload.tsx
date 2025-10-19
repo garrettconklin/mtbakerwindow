@@ -4,6 +4,7 @@ import { createStrand } from '../state/createStrand.js'
 import { updatePointPosition } from '../state/updatePointPosition.js'
 import { mergePointIfNearby } from '../state/mergePointIfNearby.js'
 import { deletePoint } from '../state/deletePoint.js'
+import { deleteMesh } from '../state/deleteMesh.js'
 import { createMesh } from '../state/createMesh.js'
 import Point from './Point.js'
 import LinesCanvas from './LinesCanvas.js'
@@ -82,6 +83,18 @@ const ImageUpload = () => {
     return Math.max(boundingBoxDiagonal, maxPointDistance)
   }
 
+  // Helper function to check if a point is inside a polygon
+  const isPointInPolygon = (point: { x: number; y: number }, polygon: { x: number; y: number }[]) => {
+    let inside = false
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      if (((polygon[i].y > point.y) !== (polygon[j].y > point.y)) &&
+          (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)) {
+        inside = !inside
+      }
+    }
+    return inside
+  }
+
   const handleFileSelect = (file: File | undefined) => {
     if (!file) return
     
@@ -91,19 +104,34 @@ const ImageUpload = () => {
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
-      if (state.selectedPointIndex === null) return
-      
-      const newState = deletePoint(state, state.selectedPointIndex)
-      patchState({
-        points: newState.points,
-        lines: newState.lines,
-        selectedPointIndex: newState.selectedPointIndex,
-        draggingPointIndex: newState.draggingPointIndex,
-      })
-    } else if (e.key === 'Escape') {
-      // Deselect any selected point
+      // Delete selected point
       if (state.selectedPointIndex !== null) {
-        patchState({ selectedPointIndex: null })
+        const newState = deletePoint(state, state.selectedPointIndex)
+        patchState({
+          points: newState.points,
+          lines: newState.lines,
+          selectedPointIndex: newState.selectedPointIndex,
+          draggingPointIndex: newState.draggingPointIndex,
+        })
+        return
+      }
+      
+      // Delete selected mesh
+      if (state.selectedMeshIndex !== null) {
+        const newState = deleteMesh(state, state.selectedMeshIndex)
+        patchState({
+          meshes: newState.meshes,
+          selectedMeshIndex: newState.selectedMeshIndex,
+        })
+        return
+      }
+    } else if (e.key === 'Escape') {
+      // Deselect any selected point or mesh
+      if (state.selectedPointIndex !== null || state.selectedMeshIndex !== null) {
+        patchState({ 
+          selectedPointIndex: null,
+          selectedMeshIndex: null,
+        })
       }
     }
   }
@@ -112,7 +140,7 @@ const ImageUpload = () => {
   React.useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [state.selectedPointIndex, state.points, state.lines])
+  }, [state.selectedPointIndex, state.selectedMeshIndex, state.points, state.lines, state.meshes])
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
@@ -132,6 +160,21 @@ const ImageUpload = () => {
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     
+    // Check if click is inside any mesh
+    const clickedMeshIndex = state.meshes.findIndex(mesh => 
+      mesh.length >= 3 && isPointInPolygon({ x, y }, mesh)
+    )
+    
+    if (clickedMeshIndex !== -1) {
+      // Clicked on a mesh - select it
+      patchState({
+        selectedMeshIndex: clickedMeshIndex,
+        selectedPointIndex: null, // Deselect any selected point
+      })
+      return
+    }
+    
+    // No mesh was clicked - create new strand
     const newState = createStrand(state, x, y)
     patchState({
       points: newState.points,
@@ -140,6 +183,7 @@ const ImageUpload = () => {
       draggingPointIndex: newState.draggingPointIndex,
       dragPath: [{ x, y }],
       dragMode: 'strand',
+      selectedMeshIndex: null, // Deselect any selected mesh
     })
   }
 

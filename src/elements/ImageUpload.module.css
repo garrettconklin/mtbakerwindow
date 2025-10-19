@@ -5,6 +5,8 @@
   border-radius: 12px;
   background-color: #111827;
   position: relative;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 

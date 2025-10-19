@@ -5,6 +5,8 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 1;
+  max-width: calc(100% - 40px);
+  max-height: calc(100% - 40px);
   /* Width and height will be set dynamically via inline styles */
 }
 

@@ -38,6 +38,7 @@ const Point = ({ index, canvas }: PointProps) => {
         creatingStrandFromIndex: firstPointIndex,
         draggingPointIndex: secondPointIndex,
         selectedPointIndex: firstPointIndex,
+        selectedMeshIndex: null, // Deselect any selected mesh
         dragPath: [point],
         dragMode: 'strand',
       })
@@ -46,6 +47,7 @@ const Point = ({ index, canvas }: PointProps) => {
       patchState({ 
         draggingPointIndex: index,
         selectedPointIndex: index,
+        selectedMeshIndex: null, // Deselect any selected mesh
       })
     }
   }

@@ -108,8 +108,30 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
       }
 
       // Draw mesh lights
-      state.meshes.forEach(mesh => {
+      state.meshes.forEach((mesh, meshIndex) => {
         if (mesh.length < 3) return // Need at least 3 points for a mesh
+
+        // Draw selection highlight for selected mesh
+        const isSelected = state.selectedMeshIndex === meshIndex
+        if (isSelected) {
+          ctx.beginPath()
+          ctx.moveTo(mesh[0].x, mesh[0].y)
+          for (let i = 1; i < mesh.length; i++) {
+            ctx.lineTo(mesh[i].x, mesh[i].y)
+          }
+          ctx.closePath()
+
+          // Draw selection outline
+          ctx.strokeStyle = '#00ffff'
+          ctx.lineWidth = 3
+          ctx.setLineDash([5, 5])
+          ctx.stroke()
+          ctx.setLineDash([])
+
+          // Draw semi-transparent fill to show selection
+          ctx.fillStyle = 'rgba(0, 255, 255, 0.1)'
+          ctx.fill()
+        }
 
         // Calculate mesh bounds for light distribution
         const minX = Math.min(...mesh.map(p => p.x))
@@ -282,7 +304,7 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
       resizeObserver.disconnect()
     }
 
-  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, state.imageDarkness, onCanvasReady])
+  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, state.imageDarkness, state.selectedMeshIndex, onCanvasReady])
 
   return (
     <canvas

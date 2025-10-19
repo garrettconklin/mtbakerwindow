@@ -31,7 +31,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
       <h2 className={styles.title}>Light Properties</h2>
       
       {/* Instructions Section */}
-      <div className={styles.section}>
+      <div className={styles.instructionsSection}>
         <h3 className={styles.sectionTitle}>Instructions</h3>
         
         <div className={styles.instructions}>
@@ -47,6 +47,15 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
             <ul className={styles.instructionList}>
               <li>Click + drag and trace area</li>
               <li>Release to finish area</li>
+            </ul>
+          </div>
+
+          <div className={styles.instructionGroup}>
+            <p className={styles.instructionSubtitle}>Selection:</p>
+            <ul className={styles.instructionList}>
+              <li>Any existing light can be selected by clicking on it</li>
+              <li>Once selected, the light can be moved by dragging it</li>
+              <li>Lights can be deleted by clicking the delete button</li>
             </ul>
           </div>
         </div>
@@ -65,10 +74,10 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         </button>
       </div>
       
-      {/* Dark Mode Section */}
+      {/* Night Mode Section */}
       {state.image && (
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Dark Mode</h3>
+          <h3 className={styles.sectionTitle}>Night Mode</h3>
           
           <div className={styles.property}>
             <label className={styles.label}>Darkness</label>

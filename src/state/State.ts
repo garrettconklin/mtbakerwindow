@@ -1,5 +1,6 @@
 export type Point = { x: number; y: number; }
 export type PointIndex = number;
+export type MeshIndex = number;
 export type Line = { a: PointIndex; b: PointIndex; }
 export type DragMode = 'strand' | 'mesh' | null
 
@@ -59,6 +60,11 @@ export type State = {
 
   // mesh lights. Each mesh is a list of points that forms a closed loop.
   readonly meshes: Point[][];
+  /**
+   * The currently selected mesh index (for deletion, etc).
+   * Updated when clicking on a mesh.
+   */
+  readonly selectedMeshIndex: MeshIndex | null;
 
   // Gesture tracking for visual feedback
   readonly dragPath: Point[];
@@ -81,6 +87,7 @@ export const DEFAULT_STATE: State = {
             meshLightColor: [[255, 215, 0, 255]], // Golden Yellow
             meshLightDensity: 0.4,
   meshes: [],
+  selectedMeshIndex: null,
   dragPath: [],
   dragMode: null,
 }

@@ -51,5 +51,6 @@ The app will be available at: `https://[username].github.io/mtbakerwindow/`
 2. Click and drag to create light strands
 3. Draw closed loops to create mesh light areas
 4. Use the properties panel to adjust light colors and density
-5. Press DELETE to remove selected points
-6. Press ESC to deselect points
+5. Click on points or meshes to select them
+6. Press DELETE to remove selected points or meshes
+7. Press ESC to deselect points or meshes
