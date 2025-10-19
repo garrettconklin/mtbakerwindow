@@ -36,7 +36,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         
         <div className={styles.instructions}>
           <div className={styles.instructionGroup}>
-            <p className={styles.instructionSubtitle}>String Lights: <i>For Edges of Homes</i></p>
+            <p className={styles.instructionSubtitle}>String Lights: <i>Edges of Homes</i></p>
             <ul className={styles.instructionList}>
               <li>Click + drag in straight line</li>
               <li>Use String Lights Menu to adjust spacing and color</li>
@@ -44,7 +44,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           </div>
           
           <div className={styles.instructionGroup}>
-            <p className={styles.instructionSubtitle}>Mesh Lights: <i>For Trees and Bushes</i></p>
+            <p className={styles.instructionSubtitle}>Mesh Lights: <i>Trees and Bushes</i></p>
             <ul className={styles.instructionList}>
               <li>Click + drag and trace area</li>
               <li>Use Mesh Lights Menu to adjust spacing and color</li>
