@@ -1,4 +1,4 @@
-# Mt Baker Window - Christmas Light Planner
+# ~Mt Baker~ Window - Christmas Light Planner
 
 A React + TypeScript application for planning Christmas light displays on house images.
 

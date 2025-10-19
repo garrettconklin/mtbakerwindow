@@ -1,29 +1,9 @@
-import React from 'react'
 import styles from './ColorDropdown.module.css'
 
 export interface ColorOption {
   readonly name: string;
   readonly value: number[][]; // Array of RGBA values [r, g, b, a]
   readonly preview: string;
-}
-
-// Helper function to convert RGBA array to hex string
-const rgbaToHex = (rgba: number[]): string => {
-  const [r, g, b] = rgba.map(Math.round)
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
-}
-
-// Helper function to create gradient preview for multi-color sequences
-const createGradientPreview = (colors: number[][]): string => {
-  if (colors.length === 1) return rgbaToHex(colors[0])
-  
-  const gradient = colors.map((color, index) => {
-    const hex = rgbaToHex(color)
-    const percent = (index / (colors.length - 1)) * 100
-    return `${hex} ${percent}%`
-  }).join(', ')
-  
-  return `linear-gradient(90deg, ${gradient})`
 }
 
 export const CHRISTMAS_COLORS: ColorOption[] = [
