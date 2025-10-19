@@ -65,6 +65,27 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         </button>
       </div>
       
+      {/* Dark Mode Section */}
+      {state.image && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Dark Mode</h3>
+          
+          <div className={styles.property}>
+            <label className={styles.label}>Darkness</label>
+            <input
+              type="range"
+              min="0"
+              max="0.9"
+              step="0.1"
+              value={state.imageDarkness}
+              onChange={(e) => patchState({ imageDarkness: parseFloat(e.target.value) })}
+              className={styles.slider}
+            />
+            <span className={styles.value}>{(state.imageDarkness * 100).toFixed(0)}%</span>
+          </div>
+        </div>
+      )}
+      
       {/* Line Light Properties */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Line Lights</h3>

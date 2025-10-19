@@ -23,6 +23,13 @@ export type State = {
    */
   readonly image: string | null;
 
+  /**
+   * Number from 0-1 which controls the darkness of the image overlay.
+   * 0 = no darkening (transparent mask)
+   * 1 = maximum darkening (very dark)
+   */
+  readonly imageDarkness: number;
+
   // line lights with strands.
   readonly points: Point[];
   readonly lines: Line[];
@@ -63,6 +70,7 @@ export type State = {
  */
 export const DEFAULT_STATE: State = {
   image: null,
+  imageDarkness: 0.5,
   points: [],
   lines: [],
   draggingPointIndex: null,

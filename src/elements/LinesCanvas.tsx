@@ -75,6 +75,12 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
       }
 
+      // Draw darkening mask over the image
+      if (state.imageDarkness > 0) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${state.imageDarkness})`
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+
       // Notify parent that canvas is ready
       if (onCanvasReady) {
         onCanvasReady(canvas)
@@ -276,7 +282,7 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
       resizeObserver.disconnect()
     }
 
-  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, onCanvasReady])
+  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, state.imageDarkness, onCanvasReady])
 
   return (
     <canvas
