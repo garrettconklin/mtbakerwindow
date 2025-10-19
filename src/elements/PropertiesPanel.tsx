@@ -38,7 +38,8 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           <div className={styles.instructionGroup}>
             <p className={styles.instructionSubtitle}>String Lights:</p>
             <ul className={styles.instructionList}>
-              <li>Click starting point and drag to finish point to create String Light</li>
+              <li>Click + drag in straight line</li>
+              <li>Use String Lights Menu to adjust spacing and color</li>
             </ul>
           </div>
           
@@ -46,16 +47,22 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
             <p className={styles.instructionSubtitle}>Mini Lights:</p>
             <ul className={styles.instructionList}>
               <li>Click + drag and trace area</li>
-              <li>Release to finish area</li>
+              <li>Use Mesh Lights Menu to adjust spacing and color</li>
             </ul>
           </div>
 
           <div className={styles.instructionGroup}>
             <p className={styles.instructionSubtitle}>Selection:</p>
             <ul className={styles.instructionList}>
-              <li>Any existing light can be selected by clicking on it</li>
-              <li>Once selected, the light can be moved by dragging it</li>
-              <li>Lights can be deleted by clicking and delete key</li>
+              <li>Select light by clicking end points</li>
+              <li>Delete lights with the delete key</li>
+            </ul>
+          </div>
+
+          <div className={styles.instructionGroup}>
+            <p className={styles.instructionSubtitle}>Download:</p>
+            <ul className={styles.instructionList}>
+              <li>Use export button to download the mockup</li>
             </ul>
           </div>
         </div>
@@ -100,7 +107,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         <h3 className={styles.sectionTitle}>Line Lights</h3>
         
         <div className={styles.property}>
-          <label className={styles.label}>Density</label>
+          <label className={styles.label}>Bulb Spacing</label>
           <input
             type="range"
             min="0.3"
@@ -129,7 +136,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         <h3 className={styles.sectionTitle}>Mesh Lights</h3>
         
         <div className={styles.property}>
-          <label className={styles.label}>Density</label>
+          <label className={styles.label}>Bulb Spacing</label>
           <input
             type="range"
             min="0.2"
