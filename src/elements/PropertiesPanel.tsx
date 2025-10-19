@@ -55,7 +55,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
             <ul className={styles.instructionList}>
               <li>Any existing light can be selected by clicking on it</li>
               <li>Once selected, the light can be moved by dragging it</li>
-              <li>Lights can be deleted by clicking the delete button</li>
+              <li>Lights can be deleted by clicking and delete key</li>
             </ul>
           </div>
         </div>
