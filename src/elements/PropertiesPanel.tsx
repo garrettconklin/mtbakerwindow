@@ -36,7 +36,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         
         <div className={styles.instructions}>
           <div className={styles.instructionGroup}>
-            <p className={styles.instructionSubtitle}>String Lights:</p>
+            <p className={styles.instructionSubtitle}>String Lights: For Edges of Homes</p>
             <ul className={styles.instructionList}>
               <li>Click + drag in straight line</li>
               <li>Use String Lights Menu to adjust spacing and color</li>
@@ -44,7 +44,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           </div>
           
           <div className={styles.instructionGroup}>
-            <p className={styles.instructionSubtitle}>Mini Lights:</p>
+            <p className={styles.instructionSubtitle}>Mesh Lights: For Trees and Bushes</p>
             <ul className={styles.instructionList}>
               <li>Click + drag and trace area</li>
               <li>Use Mesh Lights Menu to adjust spacing and color</li>
@@ -58,7 +58,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
               <li>Delete lights with the delete key</li>
             </ul>
           </div>
-
+          
           <div className={styles.instructionGroup}>
             <p className={styles.instructionSubtitle}>Download:</p>
             <ul className={styles.instructionList}>
@@ -104,7 +104,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
       
       {/* Line Light Properties */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Line Lights</h3>
+        <h3 className={styles.sectionTitle}>Strings Lights</h3>
         
         <div className={styles.property}>
           <label className={styles.label}>Bulb Spacing</label>
