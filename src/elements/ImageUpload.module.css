@@ -3,7 +3,7 @@
   width: 100%;
   border: 3px solid #0070f3;
   border-radius: 12px;
-  background-color: white;
+  background-color: #111827;
   position: relative;
 }
 
@@ -19,14 +19,15 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: white;
+  background-color: #111827;
   transition: all 0.2s;
-  padding: 40px;
+  padding: 80px;
+  
 }
 
 .uploadArea:hover {
   border-color: #0051cc;
-  background-color: #f0f7ff;
+  background-color: #111827;
 }
 
 .uploadIcon {
@@ -38,12 +39,12 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
-  color: #333;
+  color: #ffffff;
 }
 
 .uploadSubtitle {
   font-size: 16px;
-  color: #666;
+  color: #ffffff;
 }
 
 .fileInput {

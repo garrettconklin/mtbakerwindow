@@ -3,18 +3,21 @@
   flex-direction: column;
   min-height: 100vh;
   font-family: system-ui, sans-serif;
-  background-color: #f5f5f5;
+  background-color: #111827;
 }
 
 .title {
-  text-align: center;
+  text-align: left;
   margin: 20px 0;
-  padding: 0 320px; /* Account for properties panel width */
+  padding-left: 40px; /* Align with content padding */
+  color: #ffffff; /* Change this to customize the title color */
 }
 
 .content {
   display: flex;
   flex: 1;
   position: relative;
+  padding: 40px;
+  padding-right: 340px; /* Extra padding for properties panel */
 }
 

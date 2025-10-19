@@ -30,6 +30,28 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
     <div className={styles.panel}>
       <h2 className={styles.title}>Light Properties</h2>
       
+      {/* Instructions Section */}
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Instructions</h3>
+        
+        <div className={styles.instructions}>
+          <div className={styles.instructionGroup}>
+            <p className={styles.instructionSubtitle}>String Lights:</p>
+            <ul className={styles.instructionList}>
+              <li>Click starting point and drag to finish point to create String Light</li>
+            </ul>
+          </div>
+          
+          <div className={styles.instructionGroup}>
+            <p className={styles.instructionSubtitle}>Mini Lights:</p>
+            <ul className={styles.instructionList}>
+              <li>Click + drag and trace area</li>
+              <li>Release to finish area</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
       {/* Download Section */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Export</h3>
@@ -39,7 +61,7 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
           disabled={!canvas}
           className={styles.downloadButton}
         >
-          📸 Download Image
+          Download Mockup
         </button>
       </div>
       
@@ -63,10 +85,12 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         
                   <div className={styles.property}>
                     <label className={styles.label}>Color</label>
-                    <ColorDropdown
-                      value={state.lineLightColor}
-                      onChange={(color) => patchState({ lineLightColor: color })}
-                    />
+                    <div className={styles.control}>
+                      <ColorDropdown
+                        value={state.lineLightColor}
+                        onChange={(color) => patchState({ lineLightColor: color })}
+                      />
+                    </div>
                   </div>
       </div>
       
@@ -90,10 +114,12 @@ const PropertiesPanel = ({ canvas }: PropertiesPanelProps) => {
         
                   <div className={styles.property}>
                     <label className={styles.label}>Color</label>
-                    <ColorDropdown
-                      value={state.meshLightColor}
-                      onChange={(color) => patchState({ meshLightColor: color })}
-                    />
+                    <div className={styles.control}>
+                      <ColorDropdown
+                        value={state.meshLightColor}
+                        onChange={(color) => patchState({ meshLightColor: color })}
+                      />
+                    </div>
                   </div>
       </div>
     </div>

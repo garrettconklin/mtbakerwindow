@@ -16,31 +16,35 @@
   margin: 0 0 20px 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #212529;
-  border-bottom: 2px solid #0070f3;
+  color: #ffffff;
+  border-bottom: 2px solid #2788FC;
   padding-bottom: 10px;
 }
 
 .section {
   margin-bottom: 30px;
   padding: 15px;
-  background-color: white;
+  background-color: #273452;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .sectionTitle {
   margin: 0 0 15px 0;
   font-size: 1.1rem;
   font-weight: 500;
-  color: #495057;
+  color: #ffffff;
 }
 
 .property {
   display: flex;
   align-items: center;
   margin-bottom: 15px;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .property:last-child {
@@ -48,10 +52,11 @@
 }
 
 .label {
-  min-width: 80px;
+  min-width: 60px;
   font-weight: 500;
-  color: #495057;
+  color: #ffffff;
   font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .slider {
@@ -61,6 +66,8 @@
   background: #e9ecef;
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
 }
 
 .slider::-webkit-slider-thumb {
@@ -71,7 +78,7 @@
   border-radius: 50%;
   background: #0070f3;
   cursor: pointer;
-  border: 2px solid white;
+  border: 2px solid #2788FC;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -81,7 +88,7 @@
   border-radius: 50%;
   background: #0070f3;
   cursor: pointer;
-  border: 2px solid white;
+  border: 2px solid #2788FC;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -89,10 +96,52 @@
   min-width: 30px;
   text-align: right;
   font-weight: 500;
-  color: #0070f3;
+  color: #ffffff;
   font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
+.control {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.instructions {
+  color: #ffffff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.instructionGroup {
+  margin-bottom: 12px;
+}
+
+.instructionGroup:last-child {
+  margin-bottom: 0;
+}
+
+.instructionSubtitle {
+  margin: 0 0 6px 0;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.instructionList {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.instructionList li {
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.instructionList li:last-child {
+  margin-bottom: 0;
+}
 
 .downloadButton {
   width: 100%;
@@ -121,7 +170,7 @@
 }
 
 .downloadButton:disabled {
-  background-color: #e9ecef;
+  background-color: #111827;
   color: #6c757d;
   cursor: not-allowed;
   transform: none;

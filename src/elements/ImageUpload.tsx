@@ -338,7 +338,7 @@ const ImageUpload = () => {
         className={styles.fileInput}
       />
       <div className={styles.uploadIcon}>
-        📸
+        
       </div>
       <div className={styles.uploadTitle}>
         Upload a photo of your house

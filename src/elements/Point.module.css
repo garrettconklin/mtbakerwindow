@@ -13,7 +13,7 @@
 }
 
 .point:hover {
-  background-color: #0051cc;
+  background-color: #2788FC;
   transform: translate(-50%, -50%) scale(1.2);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
