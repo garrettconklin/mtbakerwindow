@@ -8,12 +8,11 @@ export interface ColorOption {
 
 export const CHRISTMAS_COLORS: ColorOption[] = [
   // Solid Colors
-  { name: 'Warm White', value: [[255, 248, 220, 255]], preview: '#FFF8DC' },
   { name: 'Cool White', value: [[240, 248, 255, 255]], preview: '#F0F8FF' },
   { name: 'Classic Red', value: [[220, 20, 60, 255]], preview: '#DC143C' },
   { name: 'Classic Green', value: [[34, 139, 34, 255]], preview: '#228B22' },
   { name: 'Classic Blue', value: [[0, 0, 255, 255]], preview: '#0000FF' },
-  { name: 'Golden Yellow', value: [[255, 215, 0, 255]], preview: '#FFD700' },
+  { name: 'Warm White', value: [[255, 215, 0, 255]], preview: '#FFD700' },
   { name: 'Bright Orange', value: [[255, 69, 0, 255]], preview: '#FF4500' },
   { name: 'Royal Blue', value: [[65, 105, 225, 255]], preview: '#4169E1' },
   { name: 'Deep Purple', value: [[75, 0, 130, 255]], preview: '#4B0082' },

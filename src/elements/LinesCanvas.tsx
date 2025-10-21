@@ -183,7 +183,7 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
               // Create radial gradient for the mesh light
               const gradient = ctx.createRadialGradient(
                 lightX, lightY, 0,           // Center point, inner radius
-                lightX, lightY, 12           // Center point, outer radius (smaller for mesh)
+                lightX, lightY, 3           // Center point, outer radius (smaller for mesh)
               )
               
               // Get the color for this light position - alternate every bulb
@@ -225,6 +225,23 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
             state.creatingStrandFromIndex !== null &&
             (line.a === state.creatingStrandFromIndex || line.b === state.creatingStrandFromIndex)) {
           return
+        }
+
+        // Check if this line is selected (either endpoint matches selectedPointIndex)
+        const isSelected = state.selectedPointIndex !== null && 
+                          (line.a === state.selectedPointIndex || line.b === state.selectedPointIndex)
+        
+        // Draw selection highlight for selected strand
+        if (isSelected) {
+          // Draw selection outline matching mesh style
+          ctx.strokeStyle = '#00ffff'  // Cyan color
+          ctx.lineWidth = 3
+          ctx.setLineDash([5, 5])
+          ctx.beginPath()
+          ctx.moveTo(pointA.x, pointA.y)
+          ctx.lineTo(pointB.x, pointB.y)
+          ctx.stroke()
+          ctx.setLineDash([])
         }
 
         // Calculate line length and light spacing
@@ -304,7 +321,7 @@ const LinesCanvas = ({ image, onCanvasReady }: LinesCanvasProps) => {
       resizeObserver.disconnect()
     }
 
-  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, state.imageDarkness, state.selectedMeshIndex, onCanvasReady])
+  }, [image, state.points, state.lines, state.meshes, state.dragPath, state.dragMode, state.lineLightDensity, state.lineLightColor, state.meshLightDensity, state.meshLightColor, state.imageDarkness, state.selectedMeshIndex, state.selectedPointIndex, onCanvasReady])
 
   return (
     <canvas

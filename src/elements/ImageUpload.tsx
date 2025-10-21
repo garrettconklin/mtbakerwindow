@@ -11,7 +11,7 @@ import LinesCanvas from './LinesCanvas.js'
 import PropertiesPanel from './PropertiesPanel.js'
 import styles from './ImageUpload.module.css'
 
-const MESH_RATIO_THRESHOLD = 0.15;
+const MESH_RATIO_THRESHOLD = 0.12;
 const MERGE_THRESHOLD = 10;
 const CLICK_THRESHOLD = 5; // pixels - distance to consider it a click vs drag
 
