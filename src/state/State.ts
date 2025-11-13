@@ -83,8 +83,8 @@ export const DEFAULT_STATE: State = {
   creatingStrandFromIndex: null,
   selectedPointIndex: null,
             lineLightDensity: 0.6,
-            lineLightColor: [[255, 215, 0, 255]], // Golden Yellow
-            meshLightColor: [[255, 215, 0, 255]], // Golden Yellow
+            lineLightColor: [[220, 235, 255, 255]], // Cool White
+            meshLightColor: [[220, 235, 255, 255]], // Cool White
             meshLightDensity: 0.4,
   meshes: [],
   selectedMeshIndex: null,

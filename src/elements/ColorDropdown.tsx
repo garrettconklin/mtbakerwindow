@@ -8,11 +8,11 @@ export interface ColorOption {
 
 export const CHRISTMAS_COLORS: ColorOption[] = [
   // Solid Colors
-  { name: 'Cool White', value: [[240, 248, 255, 255]], preview: '#F0F8FF' },
+  { name: 'Cool White', value: [[220, 235, 255, 255]], preview: '#BFE6FF' },
   { name: 'Classic Red', value: [[220, 20, 60, 255]], preview: '#DC143C' },
   { name: 'Classic Green', value: [[34, 139, 34, 255]], preview: '#228B22' },
   { name: 'Classic Blue', value: [[0, 0, 255, 255]], preview: '#0000FF' },
-  { name: 'Warm White', value: [[255, 215, 0, 255]], preview: '#FFD700' },
+  { name: 'Warm White', value: [[255, 220, 170, 170]], preview: '#FDF4DC' },
   { name: 'Bright Orange', value: [[255, 69, 0, 255]], preview: '#FF4500' },
   { name: 'Royal Blue', value: [[65, 105, 225, 255]], preview: '#4169E1' },
   { name: 'Deep Purple', value: [[75, 0, 130, 255]], preview: '#4B0082' },
@@ -47,12 +47,12 @@ export const CHRISTMAS_COLORS: ColorOption[] = [
   { 
     name: 'Warm Glow', 
     value: [[255, 69, 0, 255], [255, 140, 0, 255], [255, 215, 0, 255]], 
-    preview: 'linear-gradient(90deg, #FF4500 0%, #FF8C00 50%, #FFD700 100%)' 
+    preview: 'linear-gradient(90deg,rgb(255, 185, 64) 0%,rgb(253, 191, 115) 50%,rgb(248, 239, 187) 100%)' 
   },
   { 
-    name: 'Candy Cane', 
+    name: 'Candy Cane',
     value: [[220, 20, 60, 255], [255, 255, 255, 255]], 
-    preview: 'linear-gradient(90deg, #DC143C 0%, #FFFFFF 100%)' 
+    preview: 'linear-gradient(90deg,rgb(220, 20, 60) 0%, #FFFFFF 100%)' 
   },
   { 
     name: 'Frosty White', 
